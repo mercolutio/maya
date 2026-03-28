@@ -504,93 +504,90 @@ body::before {
 </script>
 
 <!-- VAPI SDK -->
+<script src="https://cdn.jsdelivr.net/gh/balacodeio/Vapi-Web-UMD@latest/dist/latest/vapi-web-bundle.min.js"></script>
+
 <script>
 const VAPI_PUBLIC_KEY = '3c07688d-43d3-4bca-99e6-cecdceae2a9c';
-const ASSISTANT_ID = 'ca1a4cb7-ed36-4158-9b96-d25415640939';
+const ASSISTANT_ID = '2c630caa-803f-4a2f-9718-e6b03e113cb0';
 
-let vapiInstance = null;
+let vapi = null;
 let isActive = false;
 
-// Load official VAPI HTML script tag SDK
-(function(d, t) {
-  var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
-  v.onload = function() {
-    vapiInstance = window.vapiSDK.run({
-      apiKey: VAPI_PUBLIC_KEY,
-      assistant: ASSISTANT_ID,
-      config: { hideButton: true }
-    });
+function initVapi() {
+  const VapiClass = window.Vapi?.default || window.Vapi;
+  if (!VapiClass || typeof VapiClass !== 'function') {
+    console.error('VAPI SDK nicht geladen. window.Vapi =', window.Vapi);
+    document.getElementById('statusText').textContent = 'SDK Fehler -- bitte Seite neu laden';
+    return;
+  }
+  vapi = new VapiClass(VAPI_PUBLIC_KEY);
 
-    vapiInstance.on('call-start', () => {
-      isActive = true;
-      document.getElementById('widget').classList.add('active');
-      document.getElementById('statusText').textContent = 'Maya ist verbunden ...';
-      document.getElementById('btnText').textContent = 'Gespräch beenden';
-      document.getElementById('callBtn').classList.add('ending');
-      document.getElementById('btnIcon').innerHTML = '<path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/>';
-    });
+  vapi.on('call-start', () => {
+    isActive = true;
+    document.getElementById('widget').classList.add('active');
+    document.getElementById('statusText').textContent = 'Maya ist verbunden ...';
+    document.getElementById('btnText').textContent = 'Gespräch beenden';
+    document.getElementById('callBtn').classList.add('ending');
+    document.getElementById('btnIcon').innerHTML = '<path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/>';
+  });
 
-    vapiInstance.on('call-end', () => {
-      isActive = false;
-      document.getElementById('widget').classList.remove('active');
-      document.getElementById('statusText').textContent = 'Gespräch beendet -- danke!';
-      document.getElementById('btnText').textContent = 'Erneut sprechen';
-      document.getElementById('callBtn').classList.remove('ending');
-      document.getElementById('btnIcon').innerHTML = '<path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>';
-      setTimeout(() => {
-        if (!isActive) document.getElementById('statusText').textContent = 'Bereit für Ihr Gespräch';
-      }, 3000);
-    });
+  vapi.on('call-end', () => {
+    isActive = false;
+    document.getElementById('widget').classList.remove('active');
+    document.getElementById('statusText').textContent = 'Gespräch beendet -- danke!';
+    document.getElementById('btnText').textContent = 'Erneut sprechen';
+    document.getElementById('callBtn').classList.remove('ending');
+    document.getElementById('btnIcon').innerHTML = '<path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>';
+    setTimeout(() => {
+      if (!isActive) document.getElementById('statusText').textContent = 'Bereit für Ihr Gespräch';
+    }, 3000);
+  });
 
-    vapiInstance.on('speech-start', () => {
-      document.getElementById('statusText').textContent = 'Maya spricht ...';
-    });
+  vapi.on('speech-start', () => {
+    document.getElementById('statusText').textContent = 'Maya spricht ...';
+  });
 
-    vapiInstance.on('speech-end', () => {
-      document.getElementById('statusText').textContent = 'Ich höre zu ...';
-    });
+  vapi.on('speech-end', () => {
+    document.getElementById('statusText').textContent = 'Ich höre zu ...';
+  });
 
-    vapiInstance.on('message', (msg) => {
-      if (msg.type === 'transcript' && msg.transcriptType === 'final') {
-        var t = document.getElementById('transcript');
-        t.classList.add('visible');
-        t.textContent = '"' + msg.transcript + '"';
-      }
-    });
+  vapi.on('message', (msg) => {
+    if (msg.type === 'transcript' && msg.transcriptType === 'final') {
+      const t = document.getElementById('transcript');
+      t.classList.add('visible');
+      t.textContent = '"' + msg.transcript + '"';
+    }
+  });
 
-    vapiInstance.on('error', (e) => {
-      console.error('VAPI error:', e);
-      document.getElementById('statusText').textContent = 'Verbindungsfehler -- bitte erneut versuchen';
-      isActive = false;
-      document.getElementById('widget').classList.remove('active');
-      document.getElementById('callBtn').classList.remove('ending');
-      document.getElementById('btnText').textContent = 'Gespräch starten';
-    });
-
-    document.getElementById('statusText').textContent = 'Bereit für Ihr Gespräch';
-  };
-  v.src = 'https://cdn.jsdelivr.net/gh/VapiAI/html-script-tag@latest/dist/assets/index.js';
-  v.type = 'text/javascript';
-  s.parentNode.insertBefore(v, s);
-})(document, 'script');
+  vapi.on('error', (e) => {
+    console.error('VAPI error:', e);
+    document.getElementById('statusText').textContent = 'Verbindungsfehler -- bitte erneut versuchen';
+    isActive = false;
+    document.getElementById('widget').classList.remove('active');
+    document.getElementById('callBtn').classList.remove('ending');
+    document.getElementById('btnText').textContent = 'Gespräch starten';
+  });
+}
 
 async function toggleCall() {
-  if (!vapiInstance) {
+  if (!vapi) {
     alert('VAPI wird geladen -- bitte kurz warten.');
     return;
   }
   if (isActive) {
-    vapiInstance.stop();
+    vapi.stop();
   } else {
     document.getElementById('statusText').textContent = 'Verbinde ...';
     try {
-      await vapiInstance.start();
+      await vapi.start(ASSISTANT_ID);
     } catch(e) {
       document.getElementById('statusText').textContent = 'Fehler beim Verbinden';
       console.error(e);
     }
   }
 }
+
+window.addEventListener('load', initVapi);
 </script>
 
 </body>
