@@ -406,7 +406,27 @@ line-height: 1.6;
 
 </div>
 
-<script src="https://unpkg.com/@vapi-ai/web/dist/vapi.iife.js"></script>
+<script>
+// Load VAPI SDK with fallback
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+async function loadVapiSDK() {
+  const urls = [
+    'https://unpkg.com/@vapi-ai/web/dist/vapi.iife.js',
+    'https://cdn.jsdelivr.net/npm/@vapi-ai/web/dist/vapi.iife.js'
+  ];
+  for (const url of urls) {
+    try { await loadScript(url); return; } catch(e) { console.warn('Failed to load:', url); }
+  }
+}
+</script>
 
 <script>
 // ─── KONFIGURATION ──────────────────────────────────────────────
@@ -418,9 +438,10 @@ let vapi = null;
 let isActive = false;
 
 function initVapi() {
-  const VapiClass = window.Vapi || window.VapiSDK?.default;
+  const ns = window.Vapi || window.VapiSDK;
+  const VapiClass = (typeof ns === 'function') ? ns : (ns?.default || ns?.Vapi);
   if (!VapiClass) {
-    console.error('VAPI SDK nicht geladen');
+    console.error('VAPI SDK nicht geladen. window.Vapi =', window.Vapi, 'window.VapiSDK =', window.VapiSDK);
     document.getElementById('statusText').textContent = 'SDK Fehler -- bitte Seite neu laden';
     return;
   }
@@ -497,7 +518,10 @@ async function toggleCall() {
   }
 }
 
-window.addEventListener('load', initVapi);
+window.addEventListener('load', async () => {
+  await loadVapiSDK();
+  initVapi();
+});
 </script>
 
 </body>
