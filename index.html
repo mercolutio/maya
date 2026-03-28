@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mercolutio – KI Assistent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–bg: #0c0c0e;
+–surface: #141416;
+–border: rgba(255,255,255,0.07);
+–accent: #c8f542;
+–accent-dim: rgba(200, 245, 66, 0.12);
+–text: #f0f0ee;
+–muted: #6b6b72;
+–ring: rgba(200, 245, 66, 0.35);
+}
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 24px;
+overflow: hidden;
+}
+
+/* ambient bg */
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background:
+radial-gradient(ellipse 60% 50% at 20% 80%, rgba(200,245,66,0.04) 0%, transparent 70%),
+radial-gradient(ellipse 50% 60% at 80% 10%, rgba(200,245,66,0.03) 0%, transparent 70%);
+pointer-events: none;
+}
+
+.widget {
+position: relative;
+width: 100%;
+max-width: 420px;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 24px;
+padding: 36px 32px 32px;
+backdrop-filter: blur(20px);
+box-shadow:
+0 0 0 1px rgba(255,255,255,0.03),
+0 40px 80px rgba(0,0,0,0.6),
+inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.brand {
+display: flex;
+align-items: center;
+gap: 10px;
+margin-bottom: 32px;
+}
+
+.brand-mark {
+width: 32px;
+height: 32px;
+background: var(–accent);
+border-radius: 8px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.brand-mark svg {
+width: 18px;
+height: 18px;
+}
+
+.brand-name {
+font-family: ‘DM Serif Display’, serif;
+font-size: 18px;
+letter-spacing: -0.3px;
+color: var(–text);
+}
+
+.badge {
+margin-left: auto;
+background: var(–accent-dim);
+color: var(–accent);
+font-size: 11px;
+font-weight: 500;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+padding: 4px 10px;
+border-radius: 20px;
+border: 1px solid rgba(200,245,66,0.2);
+}
+
+.headline {
+font-family: ‘DM Serif Display’, serif;
+font-size: 28px;
+line-height: 1.2;
+letter-spacing: -0.5px;
+color: var(–text);
+margin-bottom: 10px;
+}
+
+.headline em {
+font-style: italic;
+color: var(–accent);
+}
+
+.subline {
+font-size: 14px;
+color: var(–muted);
+line-height: 1.6;
+margin-bottom: 36px;
+}
+
+/* Visualizer */
+.visualizer {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 5px;
+height: 56px;
+margin-bottom: 28px;
+}
+
+.bar {
+width: 3px;
+border-radius: 2px;
+background: var(–accent);
+opacity: 0.3;
+height: 8px;
+transition: height 0.15s ease, opacity 0.15s ease;
+}
+
+.widget.active .bar {
+opacity: 1;
+animation: pulse var(–dur, 0.8s) ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+from { height: var(–min, 8px); }
+to { height: var(–max, 40px); }
+}
+
+/* set random durations and heights */
+.bar:nth-child(1) { –dur: 0.7s; –min: 6px; –max: 18px; }
+.bar:nth-child(2) { –dur: 0.9s; –min: 10px; –max: 34px; }
+.bar:nth-child(3) { –dur: 0.6s; –min: 14px; –max: 42px; }
+.bar:nth-child(4) { –dur: 1.0s; –min: 8px; –max: 50px; }
+.bar:nth-child(5) { –dur: 0.75s; –min: 16px; –max: 44px; }
+.bar:nth-child(6) { –dur: 0.85s; –min: 10px; –max: 38px; }
+.bar:nth-child(7) { –dur: 0.65s; –min: 6px; –max: 28px; }
+.bar:nth-child(8) { –dur: 0.95s; –min: 12px; –max: 36px; }
+.bar:nth-child(9) { –dur: 0.7s; –min: 8px; –max: 22px; }
+.bar:nth-child(10) { –dur: 0.8s; –min: 4px; –max: 16px; }
+.bar:nth-child(2) { animation-delay: 0.1s; }
+.bar:nth-child(3) { animation-delay: 0.05s; }
+.bar:nth-child(4) { animation-delay: 0.2s; }
+.bar:nth-child(5) { animation-delay: 0.12s; }
+.bar:nth-child(6) { animation-delay: 0.08s; }
+.bar:nth-child(7) { animation-delay: 0.18s; }
+.bar:nth-child(8) { animation-delay: 0.04s; }
+.bar:nth-child(9) { animation-delay: 0.14s; }
+.bar:nth-child(10) { animation-delay: 0.22s; }
+
+.status-text {
+text-align: center;
+font-size: 13px;
+color: var(–muted);
+margin-bottom: 28px;
+min-height: 20px;
+transition: color 0.3s;
+}
+
+.widget.active .status-text {
+color: var(–accent);
+}
+
+/* Main button */
+.btn-call {
+width: 100%;
+padding: 16px;
+border-radius: 14px;
+border: none;
+cursor: pointer;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 15px;
+font-weight: 500;
+letter-spacing: -0.2px;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+transition: all 0.2s ease;
+background: var(–accent);
+color: #0c0c0e;
+position: relative;
+overflow: hidden;
+}
+
+.btn-call::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+}
+
+.btn-call:hover {
+transform: translateY(-1px);
+box-shadow: 0 8px 24px rgba(200,245,66,0.3);
+}
+
+.btn-call:active {
+transform: translateY(0);
+}
+
+.btn-call.ending {
+background: #1f1f22;
+color: #ff6b6b;
+border: 1px solid rgba(255,107,107,0.2);
+}
+
+.btn-call.ending:hover {
+box-shadow: 0 8px 24px rgba(255,107,107,0.2);
+}
+
+.btn-icon {
+width: 20px;
+height: 20px;
+flex-shrink: 0;
+}
+
+/* Divider */
+.divider {
+display: flex;
+align-items: center;
+gap: 12px;
+margin: 20px 0;
+}
+
+.divider::before, .divider::after {
+content: ‘’;
+flex: 1;
+height: 1px;
+background: var(–border);
+}
+
+.divider span {
+font-size: 11px;
+color: var(–muted);
+text-transform: uppercase;
+letter-spacing: 1px;
+}
+
+/* Info row */
+.info-row {
+display: flex;
+gap: 8px;
+justify-content: center;
+}
+
+.info-chip {
+display: flex;
+align-items: center;
+gap: 5px;
+font-size: 11px;
+color: var(–muted);
+padding: 5px 10px;
+border-radius: 20px;
+border: 1px solid var(–border);
+}
+
+.info-chip svg {
+width: 12px;
+height: 12px;
+opacity: 0.6;
+}
+
+/* Transcript bubble */
+.transcript {
+margin-top: 20px;
+background: rgba(255,255,255,0.03);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 14px 16px;
+font-size: 13px;
+color: var(–muted);
+line-height: 1.6;
+min-height: 52px;
+display: none;
+font-style: italic;
+}
+
+.transcript.visible { display: block; }
+
+/* Pulse ring behind button on active */
+.btn-wrap {
+position: relative;
+}
+
+.btn-wrap::after {
+content: ‘’;
+position: absolute;
+inset: -4px;
+border-radius: 18px;
+border: 2px solid var(–accent);
+opacity: 0;
+transition: opacity 0.3s;
+pointer-events: none;
+}
+
+.widget.active .btn-wrap::after {
+opacity: 0.3;
+animation: ring-pulse 2s ease-in-out infinite;
+}
+
+@keyframes ring-pulse {
+0%, 100% { transform: scale(1); opacity: 0.3; }
+50% { transform: scale(1.02); opacity: 0.1; }
+}
+
+/* Config note */
+.config-note {
+margin-top: 20px;
+padding: 12px 14px;
+background: rgba(200,245,66,0.05);
+border: 1px solid rgba(200,245,66,0.15);
+border-radius: 10px;
+font-size: 12px;
+color: rgba(200,245,66,0.7);
+line-height: 1.6;
+}
+
+.config-note strong { color: var(–accent); }
+</style>
+
+</head>
+<body>
+
+<div class="widget" id="widget">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 18 18" fill="none">
+        <path d="M9 2L15 5.5V12.5L9 16L3 12.5V5.5L9 2Z" stroke="#0c0c0e" stroke-width="1.5" fill="none"/>
+        <circle cx="9" cy="9" r="2" fill="#0c0c0e"/>
+      </svg>
+    </div>
+    <span class="brand-name">Mercolutio</span>
+    <span class="badge">KI Assistent</span>
+  </div>
+
+  <div class="headline">Sprechen Sie mit<br><em>Maya</em></div>
+  <p class="subline">Unser KI-Assistent beantwortet Ihre Fragen und bucht direkt einen Termin — rund um die Uhr.</p>
+
+  <div class="visualizer" id="visualizer">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+
+  <div class="status-text" id="statusText">Bereit für Ihr Gespräch</div>
+
+  <div class="btn-wrap">
+    <button class="btn-call" id="callBtn" onclick="toggleCall()">
+      <svg class="btn-icon" id="btnIcon" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+      </svg>
+      <span id="btnText">Gespräch starten</span>
+    </button>
+  </div>
+
+  <div class="transcript" id="transcript"></div>
+
+  <div class="divider"><span>Info</span></div>
+
+  <div class="info-row">
+    <div class="info-chip">
+      <svg viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.5"/></svg>
+      Kostenlos
+    </div>
+    <div class="info-chip">
+      <svg viewBox="0 0 12 12" fill="currentColor"><path d="M6 1a5 5 0 100 10A5 5 0 006 1zm0 1.5a3.5 3.5 0 110 7 3.5 3.5 0 010-7zM6 4v2.5l1.5 1"/></svg>
+      24/7
+    </div>
+    <div class="info-chip">
+      <svg viewBox="0 0 12 12" fill="currentColor"><path d="M10 8.5l-1-1a.7.7 0 00-1 0l-.5.5A5.4 5.4 0 014 4.5l.5-.5a.7.7 0 000-1L3.5 2a.7.7 0 00-1 0C1 3.5 1.5 7 5 8.5S10.5 11 10 8.5z"/></svg>
+      Deutsch
+    </div>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/@vapi-ai/web/dist/vapi.iife.js"></script>
+
+<script>
+// ─── KONFIGURATION ──────────────────────────────────────────────
+const VAPI_PUBLIC_KEY  = '3c07688d-43d3-4bca-99e6-cecdceae2a9c';
+const ASSISTANT_ID     = '2c630caa-803f-4a2f-9718-e6b03e113cb0';
+// ────────────────────────────────────────────────────────────────
+
+let vapi = null;
+let isActive = false;
+
+function initVapi() {
+  const VapiClass = window.Vapi || window.VapiSDK?.default;
+  if (!VapiClass) {
+    console.error('VAPI SDK nicht geladen');
+    document.getElementById('statusText').textContent = 'SDK Fehler – bitte Seite neu laden';
+    return;
+  }
+  vapi = new VapiClass(VAPI_PUBLIC_KEY);
+
+  vapi.on('call-start', () => {
+    isActive = true;
+    document.getElementById('widget').classList.add('active');
+    document.getElementById('statusText').textContent = 'Maya ist verbunden …';
+    document.getElementById('btnText').textContent = 'Gespräch beenden';
+    document.getElementById('callBtn').classList.add('ending');
+    document.getElementById('btnIcon').innerHTML = '<path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/>';
+  });
+
+  vapi.on('call-end', () => {
+    isActive = false;
+    document.getElementById('widget').classList.remove('active');
+    document.getElementById('statusText').textContent = 'Gespräch beendet – danke!';
+    document.getElementById('btnText').textContent = 'Erneut sprechen';
+    document.getElementById('callBtn').classList.remove('ending');
+    document.getElementById('btnIcon').innerHTML = '<path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>';
+    setTimeout(() => {
+      if (!isActive) document.getElementById('statusText').textContent = 'Bereit für Ihr Gespräch';
+    }, 3000);
+  });
+
+  vapi.on('speech-start', () => {
+    document.getElementById('statusText').textContent = 'Maya spricht …';
+  });
+
+  vapi.on('speech-end', () => {
+    document.getElementById('statusText').textContent = 'Ich höre zu …';
+  });
+
+  vapi.on('message', (msg) => {
+    if (msg.type === 'transcript' && msg.transcriptType === 'final') {
+      const t = document.getElementById('transcript');
+      t.classList.add('visible');
+      t.textContent = `"${msg.transcript}"`;
+    }
+  });
+
+  vapi.on('error', (e) => {
+    console.error('VAPI error:', e);
+    document.getElementById('statusText').textContent = 'Verbindungsfehler – bitte erneut versuchen';
+    isActive = false;
+    document.getElementById('widget').classList.remove('active');
+    document.getElementById('callBtn').classList.remove('ending');
+    document.getElementById('btnText').textContent = 'Gespräch starten';
+  });
+}
+
+async function toggleCall() {
+  if (!vapi) {
+    alert('VAPI wird geladen – bitte kurz warten.');
+    return;
+  }
+
+  if (VAPI_PUBLIC_KEY === 'PUBLIC_KEY') {
+    alert('Bitte zuerst den VAPI Public Key im Code eintragen (Zeile 3).');
+    return;
+  }
+
+  if (isActive) {
+    vapi.stop();
+  } else {
+    document.getElementById('statusText').textContent = 'Verbinde …';
+    try {
+      await vapi.start(ASSISTANT_ID);
+    } catch(e) {
+      document.getElementById('statusText').textContent = 'Fehler beim Verbinden';
+      console.error(e);
+    }
+  }
+}
+
+window.addEventListener('load', initVapi);
+</script>
+
+</body>
+</html>
