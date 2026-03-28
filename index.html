@@ -4,26 +4,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mercolutio – KI Assistent</title>
+<title>Mercolutio -- KI Assistent</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-–bg: #0c0c0e;
-–surface: #141416;
-–border: rgba(255,255,255,0.07);
-–accent: #c8f542;
-–accent-dim: rgba(200, 245, 66, 0.12);
-–text: #f0f0ee;
-–muted: #6b6b72;
-–ring: rgba(200, 245, 66, 0.35);
+--bg: #0c0c0e;
+--surface: #141416;
+--border: rgba(255,255,255,0.07);
+--accent: #c8f542;
+--accent-dim: rgba(200, 245, 66, 0.12);
+--text: #f0f0ee;
+--muted: #6b6b72;
+--ring: rgba(200, 245, 66, 0.35);
 }
 
 body {
-background: var(–bg);
-color: var(–text);
+background: var(--bg);
+color: var(--text);
 font-family: ‘DM Sans’, sans-serif;
 min-height: 100vh;
 display: flex;
@@ -48,8 +48,8 @@ pointer-events: none;
 position: relative;
 width: 100%;
 max-width: 420px;
-background: var(–surface);
-border: 1px solid var(–border);
+background: var(--surface);
+border: 1px solid var(--border);
 border-radius: 24px;
 padding: 36px 32px 32px;
 backdrop-filter: blur(20px);
@@ -69,7 +69,7 @@ margin-bottom: 32px;
 .brand-mark {
 width: 32px;
 height: 32px;
-background: var(–accent);
+background: var(--accent);
 border-radius: 8px;
 display: flex;
 align-items: center;
@@ -85,13 +85,13 @@ height: 18px;
 font-family: ‘DM Serif Display’, serif;
 font-size: 18px;
 letter-spacing: -0.3px;
-color: var(–text);
+color: var(--text);
 }
 
 .badge {
 margin-left: auto;
-background: var(–accent-dim);
-color: var(–accent);
+background: var(--accent-dim);
+color: var(--accent);
 font-size: 11px;
 font-weight: 500;
 letter-spacing: 0.5px;
@@ -106,18 +106,18 @@ font-family: ‘DM Serif Display’, serif;
 font-size: 28px;
 line-height: 1.2;
 letter-spacing: -0.5px;
-color: var(–text);
+color: var(--text);
 margin-bottom: 10px;
 }
 
 .headline em {
 font-style: italic;
-color: var(–accent);
+color: var(--accent);
 }
 
 .subline {
 font-size: 14px;
-color: var(–muted);
+color: var(--muted);
 line-height: 1.6;
 margin-bottom: 36px;
 }
@@ -135,7 +135,7 @@ margin-bottom: 28px;
 .bar {
 width: 3px;
 border-radius: 2px;
-background: var(–accent);
+background: var(--accent);
 opacity: 0.3;
 height: 8px;
 transition: height 0.15s ease, opacity 0.15s ease;
@@ -143,25 +143,25 @@ transition: height 0.15s ease, opacity 0.15s ease;
 
 .widget.active .bar {
 opacity: 1;
-animation: pulse var(–dur, 0.8s) ease-in-out infinite alternate;
+animation: pulse var(--dur, 0.8s) ease-in-out infinite alternate;
 }
 
 @keyframes pulse {
-from { height: var(–min, 8px); }
-to { height: var(–max, 40px); }
+from { height: var(--min, 8px); }
+to { height: var(--max, 40px); }
 }
 
 /* set random durations and heights */
-.bar:nth-child(1) { –dur: 0.7s; –min: 6px; –max: 18px; }
-.bar:nth-child(2) { –dur: 0.9s; –min: 10px; –max: 34px; }
-.bar:nth-child(3) { –dur: 0.6s; –min: 14px; –max: 42px; }
-.bar:nth-child(4) { –dur: 1.0s; –min: 8px; –max: 50px; }
-.bar:nth-child(5) { –dur: 0.75s; –min: 16px; –max: 44px; }
-.bar:nth-child(6) { –dur: 0.85s; –min: 10px; –max: 38px; }
-.bar:nth-child(7) { –dur: 0.65s; –min: 6px; –max: 28px; }
-.bar:nth-child(8) { –dur: 0.95s; –min: 12px; –max: 36px; }
-.bar:nth-child(9) { –dur: 0.7s; –min: 8px; –max: 22px; }
-.bar:nth-child(10) { –dur: 0.8s; –min: 4px; –max: 16px; }
+.bar:nth-child(1) { --dur: 0.7s; --min: 6px; --max: 18px; }
+.bar:nth-child(2) { --dur: 0.9s; --min: 10px; --max: 34px; }
+.bar:nth-child(3) { --dur: 0.6s; --min: 14px; --max: 42px; }
+.bar:nth-child(4) { --dur: 1.0s; --min: 8px; --max: 50px; }
+.bar:nth-child(5) { --dur: 0.75s; --min: 16px; --max: 44px; }
+.bar:nth-child(6) { --dur: 0.85s; --min: 10px; --max: 38px; }
+.bar:nth-child(7) { --dur: 0.65s; --min: 6px; --max: 28px; }
+.bar:nth-child(8) { --dur: 0.95s; --min: 12px; --max: 36px; }
+.bar:nth-child(9) { --dur: 0.7s; --min: 8px; --max: 22px; }
+.bar:nth-child(10) { --dur: 0.8s; --min: 4px; --max: 16px; }
 .bar:nth-child(2) { animation-delay: 0.1s; }
 .bar:nth-child(3) { animation-delay: 0.05s; }
 .bar:nth-child(4) { animation-delay: 0.2s; }
@@ -175,14 +175,14 @@ to { height: var(–max, 40px); }
 .status-text {
 text-align: center;
 font-size: 13px;
-color: var(–muted);
+color: var(--muted);
 margin-bottom: 28px;
 min-height: 20px;
 transition: color 0.3s;
 }
 
 .widget.active .status-text {
-color: var(–accent);
+color: var(--accent);
 }
 
 /* Main button */
@@ -201,7 +201,7 @@ align-items: center;
 justify-content: center;
 gap: 10px;
 transition: all 0.2s ease;
-background: var(–accent);
+background: var(--accent);
 color: #0c0c0e;
 position: relative;
 overflow: hidden;
@@ -251,12 +251,12 @@ margin: 20px 0;
 content: ‘’;
 flex: 1;
 height: 1px;
-background: var(–border);
+background: var(--border);
 }
 
 .divider span {
 font-size: 11px;
-color: var(–muted);
+color: var(--muted);
 text-transform: uppercase;
 letter-spacing: 1px;
 }
@@ -273,10 +273,10 @@ display: flex;
 align-items: center;
 gap: 5px;
 font-size: 11px;
-color: var(–muted);
+color: var(--muted);
 padding: 5px 10px;
 border-radius: 20px;
-border: 1px solid var(–border);
+border: 1px solid var(--border);
 }
 
 .info-chip svg {
@@ -289,11 +289,11 @@ opacity: 0.6;
 .transcript {
 margin-top: 20px;
 background: rgba(255,255,255,0.03);
-border: 1px solid var(–border);
+border: 1px solid var(--border);
 border-radius: 12px;
 padding: 14px 16px;
 font-size: 13px;
-color: var(–muted);
+color: var(--muted);
 line-height: 1.6;
 min-height: 52px;
 display: none;
@@ -312,7 +312,7 @@ content: ‘’;
 position: absolute;
 inset: -4px;
 border-radius: 18px;
-border: 2px solid var(–accent);
+border: 2px solid var(--accent);
 opacity: 0;
 transition: opacity 0.3s;
 pointer-events: none;
@@ -340,7 +340,7 @@ color: rgba(200,245,66,0.7);
 line-height: 1.6;
 }
 
-.config-note strong { color: var(–accent); }
+.config-note strong { color: var(--accent); }
 </style>
 
 </head>
@@ -421,7 +421,7 @@ function initVapi() {
   const VapiClass = window.Vapi || window.VapiSDK?.default;
   if (!VapiClass) {
     console.error('VAPI SDK nicht geladen');
-    document.getElementById('statusText').textContent = 'SDK Fehler – bitte Seite neu laden';
+    document.getElementById('statusText').textContent = 'SDK Fehler -- bitte Seite neu laden';
     return;
   }
   vapi = new VapiClass(VAPI_PUBLIC_KEY);
@@ -438,7 +438,7 @@ function initVapi() {
   vapi.on('call-end', () => {
     isActive = false;
     document.getElementById('widget').classList.remove('active');
-    document.getElementById('statusText').textContent = 'Gespräch beendet – danke!';
+    document.getElementById('statusText').textContent = 'Gespräch beendet -- danke!';
     document.getElementById('btnText').textContent = 'Erneut sprechen';
     document.getElementById('callBtn').classList.remove('ending');
     document.getElementById('btnIcon').innerHTML = '<path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>';
@@ -465,7 +465,7 @@ function initVapi() {
 
   vapi.on('error', (e) => {
     console.error('VAPI error:', e);
-    document.getElementById('statusText').textContent = 'Verbindungsfehler – bitte erneut versuchen';
+    document.getElementById('statusText').textContent = 'Verbindungsfehler -- bitte erneut versuchen';
     isActive = false;
     document.getElementById('widget').classList.remove('active');
     document.getElementById('callBtn').classList.remove('ending');
@@ -475,7 +475,7 @@ function initVapi() {
 
 async function toggleCall() {
   if (!vapi) {
-    alert('VAPI wird geladen – bitte kurz warten.');
+    alert('VAPI wird geladen -- bitte kurz warten.');
     return;
   }
 
